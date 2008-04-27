@@ -3,14 +3,14 @@
 
 #include <allegro.h>
 
-#include "PolyMap.h"
-#include "AdvancedGeometry/PointVsSphere2D.h"
-#include "AdvancedGeometry/PointVsPairRect2D.h"
-#include "AdvancedGeometry/PointVsShapeRect2D.h"
-#include "AdvancedGeometry/PointVsRadiusRect2D.h"
+#include <PolyMap/PolyMap.h>
+#include <AdvancedGeometry/PointVsSphere2D.h>
+#include <AdvancedGeometry/PointVsPairRect2D.h>
+#include <AdvancedGeometry/PointVsShapeRect2D.h>
+#include <AdvancedGeometry/PointVsRadiusRect2D.h>
 
-#include "AdvancedGeometry/PointVsPolygon2D.h"
-#include "AdvancedGeometry/PointVsEdgedPolygon2D.h"
+#include <AdvancedGeometry/PointVsPolygon2D.h>
+#include <AdvancedGeometry/PointVsEdgedPolygon2D.h>
 
 using namespace std;
 
