@@ -16,6 +16,20 @@ using namespace std;
 
 BITMAP* Buffer;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int main( int argc, char* argv[] ) {
 //	if ( argc == 1 ) {
 //		cout << "No Args" << endl;
