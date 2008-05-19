@@ -178,13 +178,19 @@ int main( int argc, char* argv[] ) {
 			CameraPos = InnerViewRect.ClosestPoint(CameraPos - HalfScreenShape) + HalfScreenShape;
 			
 			
+			
+			// Step the game //
 			Game.Step();
 			
+			// Draw the game //
 			Game.Draw();
 		
 		
 			// Draw the cursor (so it's on top of everything //
 			gfxDrawCircle( MouseWorld, 2, RGB_WHITE );
+			
+			// Draw center cross //
+			gfxDrawCross( HalfScreenShape - CameraPos, 4 );
 	
 			while( key[KEY_SPACE] ) {}
 	
