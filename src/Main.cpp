@@ -73,7 +73,7 @@ public:
 			}
 
 			else if ( Map.Element[idx].Type == PME_RECT ) {
-				// What type of Node is it? //
+				// What type of Rectangle is it? //
 				switch (Map.Element[idx].Type) {
 					default: 
 					case 1: {
@@ -88,6 +88,7 @@ public:
 		
 		// Draw Links //
 		for ( size_t idx = 0; idx < Map.Link.size(); idx++ ) {
+			// What type of link is it? //
 			//if ( Map.Link.Type == 1 )
 			{
 				gfxDrawLine( Map.Element[ Map.Link[idx].a ].Center, Map.Element[ Map.Link[idx].b ].Center );
@@ -105,12 +106,21 @@ int main( int argc, char* argv[] ) {
 	{
 		cGame Game;
 	
+		Vector2D MouseOld;
+		Vector2D Mouse;
+	
 		while( !gfxShutdown() ) {
 			gfxClearBuffer( RGB(70,0,0) );
+			gfxSetMatrixToCamera();
 			
 			// Note the cursor position //
-			Vector2D Mouse(mouse_x / ScreenScalar, mouse_y / ScreenScalar);
+			MouseOld = Mouse;
+			Mouse = Vector2D(mouse_x / ScreenScalar, mouse_y / ScreenScalar);
 			
+			
+			if ( mouse_b == 1 ) {
+				CameraPos -= MouseOld - Mouse;
+			}
 			
 			Game.Step();
 			
@@ -118,7 +128,7 @@ int main( int argc, char* argv[] ) {
 		
 		
 			// Draw the cursor (so it's on top of everything //
-			gfxDrawCircle( Mouse, 2, RGB_WHITE );
+			gfxDrawCircle( Mouse - CameraPos, 2, RGB_WHITE );
 	
 			while( key[KEY_SPACE] ) {}
 	
