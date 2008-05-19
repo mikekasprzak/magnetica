@@ -12,21 +12,10 @@
 #include <AdvancedGeometry/PointVsPolygon2D.h>
 #include <AdvancedGeometry/PointVsEdgedPolygon2D.h>
 
+#include <AllegroGraphics/Graphics.h>
+#include <AllegroGraphics/GraphicsDraw.h>
+
 using namespace std;
-
-BITMAP* Buffer;
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -41,15 +30,8 @@ int main( int argc, char* argv[] ) {
 //	cPolyMap Map( argv[1] );
 //	Map.Save( "Wheater.txt" );
 
+	gfxInit( 480, 320, false, 2 );
 
-	allegro_init();
-	install_keyboard();
-	install_mouse();
-	
-	set_color_depth( 16 );
-	set_gfx_mode( GFX_AUTODETECT_WINDOWED, 800, 600, 0, 0 );
-	Buffer = create_bitmap( 800, 600 );
-	
 	// Sphere //
 	Vector2D DummySphere( 100, 100 );
 	Real DummySphereRadius = 32;
@@ -95,188 +77,203 @@ int main( int argc, char* argv[] ) {
 	
 	
 	while( !key[KEY_ESC] ) {
-		clear_to_color( Buffer, makecol(35,0,0) );
+		gfxClearBuffer( RGB(70,0,0) );
 		
-		Vector2D Mouse(mouse_x, mouse_y);
-		circle( Buffer, mouse_x, mouse_y, 2, makecol( 255, 255, 255 ) );
+		// Note the cursor position //
+		Vector2D Mouse(mouse_x / ScreenScalar, mouse_y / ScreenScalar);
 		
 		// Circle Tests //
 		{
-			int Color = makecol( 255, 0, 0 );
+			ColorType Color = RGB( 255, 0, 0 );
 			
 			// If inside the sphere //
 			if ( TestPointVsSphere2D( Mouse, DummySphere, DummySphereRadius ) ) {
-				Color = makecol( 255, 255, 0 );
+				Color = RGB( 255, 255, 0 );
 			}
 
 			// Draw the Circle //
-			circle( Buffer, (int)DummySphere.x, (int)DummySphere.y, (int)DummySphereRadius, Color );
+			gfxDrawCircle( DummySphere, DummySphereRadius, Color );
 			
 			// Nearest point on Circle //
 			Vector2D Point = NearestPointOnSphere2D( Mouse, DummySphere, DummySphereRadius );
-			circle( Buffer, (int)Point.x, (int)Point.y, 3, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( Point, 3, RGB( 0, 255, 0 ) );
+			
 			
 			// Nearest point on the edge of the circle //
 			Vector2D EdgePoint = NearestPointOnEdgeOfSphere2D( Mouse, DummySphere, DummySphereRadius );
-			circle( Buffer, (int)EdgePoint.x, (int)EdgePoint.y, 5, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( EdgePoint, 5, RGB( 0, 255, 0 ) );
 		}
 		
 		// PairRect Tests //
 		{
-			int Color = makecol( 255, 0, 0 );
+			ColorType Color = RGB( 255, 0, 0 );
 			
 			// If inside the Rect //
 			if ( TestPointVsPairRect2D( Mouse, PairP1, PairP2 ) ) {
-				Color = makecol( 255, 255, 0 );
+				Color = RGB( 255, 255, 0 );
 			}
 			
 			// Draw the Rect //
-			rect( Buffer, (int)PairP1.x, (int)PairP1.y, (int)PairP2.x, (int)PairP2.y, Color );
+			//rect( Buffer, (int)PairP1.x, (int)PairP1.y, (int)PairP2.x, (int)PairP2.y, Color );
+			gfxDrawRectWithNormals( PairP1, PairP2, Color );
 			
 			
 			// Nearest point on Rect //
 			Vector2D Point = NearestPointOnPairRect2D( Mouse, PairP1, PairP2 );
-			circle( Buffer, (int)Point.x, (int)Point.y, 3, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( Point, 3, RGB( 0, 255, 0 ) );
 			
 			// Nearest point on the edge of the Rect //
 			Vector2D EdgePoint = NearestPointOnEdgeOfPairRect2D( Mouse, PairP1, PairP2 );
-			circle( Buffer, (int)EdgePoint.x, (int)EdgePoint.y, 5, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( EdgePoint, 5, RGB( 0, 255, 0 ) );
 
 			// Nearest point on the edge of the Rect //
 			Vector2D CornerPoint = NearestCornerPointOnEdgeOfPairRect2D( Mouse, PairP1, PairP2 );
-			circle( Buffer, (int)CornerPoint.x, (int)CornerPoint.y, 7, makecol( 255, 255, 0 ) );
+			gfxDrawRadiusBox( CornerPoint, 7, RGB( 255, 255, 0 ) );
 		}
 		
 		// ShapeRect Tests //
 		{
-			int Color = makecol( 255, 0, 0 );
+			ColorType Color = RGB( 255, 0, 0 );
 			
 			// If inside the Rect //
 			if ( TestPointVsShapeRect2D( Mouse, ShapeP1, ShapeShape ) ) {
-				Color = makecol( 255, 255, 0 );
+				Color = RGB( 255, 255, 0 );
 			}
 			
 			// Draw the Rect //
-			rect( Buffer, (int)ShapeP1.x, (int)ShapeP1.y, (int)ShapeP1.x + ShapeShape.x, (int)ShapeP1.y + ShapeShape.y, Color );
+			gfxDrawRectWithNormals( ShapeP1, ShapeP1 + ShapeShape, Color );
 			
 			
 			// Nearest point on Rect //
 			Vector2D Point = NearestPointOnShapeRect2D( Mouse, ShapeP1, ShapeShape );
-			circle( Buffer, (int)Point.x, (int)Point.y, 3, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( Point, 3, RGB( 0, 255, 0 ) );
 			
 			// Nearest point on the edge of the Rect //
 			Vector2D EdgePoint = NearestPointOnEdgeOfShapeRect2D( Mouse, ShapeP1, ShapeShape );
-			circle( Buffer, (int)EdgePoint.x, (int)EdgePoint.y, 5, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( EdgePoint, 5, RGB( 0, 255, 0 ) );
 
 			// Nearest point on the edge of the Rect //
 			Vector2D CornerPoint = NearestCornerPointOnEdgeOfShapeRect2D( Mouse, ShapeP1, ShapeShape );
-			circle( Buffer, (int)CornerPoint.x, (int)CornerPoint.y, 7, makecol( 255, 255, 0 ) );
+			gfxDrawRadiusBox( CornerPoint, 7, RGB( 255, 255, 0 ) );
 		}
 		
 		// RadiusRect Tests //
 		{
-			int Color = makecol( 255, 0, 0 );
+			ColorType Color = RGB( 255, 0, 0 );
 			
 			// If inside the Rect //
 			if ( TestPointVsRadiusRect2D( Mouse, RadiusCenter, RadiusRadius ) ) {
-				Color = makecol( 255, 255, 0 );
+				Color = RGB( 255, 255, 0 );
 			}
 			
 			// Draw the Rect //
-			rect( Buffer, (int)RadiusCenter.x - RadiusRadius.x, (int)RadiusCenter.y - RadiusRadius.y, (int)RadiusCenter.x + RadiusRadius.x, (int)RadiusCenter.y + RadiusRadius.y, Color );
+			gfxDrawRectWithNormals( RadiusCenter - RadiusRadius, RadiusCenter + RadiusRadius, Color );
 			
 			
 			// Nearest point on Rect //
 			Vector2D Point = NearestPointOnRadiusRect2D( Mouse, RadiusCenter, RadiusRadius );
-			circle( Buffer, (int)Point.x, (int)Point.y, 3, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( Point, 3, RGB( 0, 255, 0 ) );
 			
 			// Nearest point on the edge of the Rect //
 			Vector2D EdgePoint = NearestPointOnEdgeOfRadiusRect2D( Mouse, RadiusCenter, RadiusRadius );
-			circle( Buffer, (int)EdgePoint.x, (int)EdgePoint.y, 5, makecol( 0, 255, 0 ) );
+			gfxDrawCircle(EdgePoint, 5, RGB( 0, 255, 0 ) );
 
 			// Nearest point on the edge of the Rect //
 			Vector2D CornerPoint = NearestCornerPointOnEdgeOfRadiusRect2D( Mouse, RadiusCenter, RadiusRadius );
-			circle( Buffer, (int)CornerPoint.x, (int)CornerPoint.y, 7, makecol( 255, 255, 0 ) );
+			gfxDrawRadiusBox( CornerPoint, 7, RGB( 255, 255, 0 ) );
 		}
 
 		// Polygon Tests //
 		{
 			// Draw the Polygon //
-			int Color = makecol( 255, 0, 0 );
+			ColorType Color = RGB( 255, 0, 0 );
 			
 			// If inside the Polygon //
 			if ( TestPointVsPolygon2D( Mouse, Poly, PolyCount ) ) {
-				Color = makecol( 255, 255, 0 );
+				Color = RGB( 255, 255, 0 );
 			}
 			
-			// Draw the Rect //
-			for ( size_t idx = 0; idx < PolyCount-1; idx++ ) {
-				line( Buffer, (int)Poly[idx].x, (int)Poly[idx].y, (int)Poly[idx+1].x, (int)Poly[idx+1].y, 
-					(idx == NearestEdgeIndexOfPolygon2D( Mouse, Poly, PolyCount )) ? makecol(255, 255, 255) : Color
-					);
-			}
-			if ( PolyCount-1 == NearestEdgeIndexOfPolygon2D( Mouse, Poly, PolyCount ) ) {
-				Color = makecol(255, 255, 255);
-			}
-			line( Buffer, (int)Poly[PolyCount-1].x, (int)Poly[PolyCount-1].y, (int)Poly[0].x, (int)Poly[0].y, Color );
+			// Draw the Polygon //
+			gfxDrawClosedPolygonWithNormals( Poly, PolyCount, Color );
+			gfxDrawPolygonEdge( 
+				NearestEdgeIndexOfPolygon2D( Mouse, Poly, PolyCount ),
+				Poly,
+				PolyCount,
+				RGB_CYAN
+				);
 			
 			// Nearest point on Polygon //
 			Vector2D Point = NearestPointOnPolygon2D( Mouse, Poly, PolyCount );
-			circle( Buffer, (int)Point.x, (int)Point.y, 3, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( Point, 3, RGB( 0, 255, 0 ) );
 			
 			// Nearest point on the edge of the Polygon //
 			Vector2D EdgePoint = NearestPointOnEdgeOfPolygon2D( Mouse, Poly, PolyCount );
-			circle( Buffer, (int)EdgePoint.x, (int)EdgePoint.y, 5, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( EdgePoint, 5, RGB( 0, 255, 0 ) );
 
 			// Nearest point on the edge of the Polygon //
 			Vector2D CornerPoint = NearestCornerPointOnEdgeOfPolygon2D( Mouse, Poly, PolyCount );
-			circle( Buffer, (int)CornerPoint.x, (int)CornerPoint.y, 7, makecol( 255, 255, 0 ) );
+			gfxDrawRadiusBox( CornerPoint, 7, RGB( 255, 255, 0 ) );
 		}
 
 		// Edged Polygon Tests //
 		{
 			// Draw the Polygon //
-			int Color = makecol( 255, 0, 0 );
+			ColorType Color = RGB( 255, 0, 0 );
 			
 			// If inside the Polygon //
 			if ( TestPointVsEdgedPolygon2D( Mouse, Poy, PoyOn, PoyCount ) ) {
-				Color = makecol( 255, 255, 0 );
+				Color = RGB( 255, 255, 0 );
 			}
 			
-			// Draw the Rect //
-			for ( size_t idx = 0; idx < PoyCount-1; idx++ ) {
-				if ( PoyOn[idx] )
-					line( Buffer, (int)Poy[idx].x, (int)Poy[idx].y, (int)Poy[idx+1].x, (int)Poy[idx+1].y, 
-						(idx == NearestEdgeIndexOfEdgedPolygon2D( Mouse, Poy, PoyOn, PoyCount )) ? makecol(255, 255, 255) : Color
-						);
+			// Draw the Polygon //
+			gfxDrawEdgedPolygonWithNormals( Poy, PoyOn, PoyCount, Color );
+			
+			int Edge = NearestEdgeIndexOfEdgedPolygon2D( Mouse, Poy, PoyOn, PoyCount );
+			if ( Edge != -1 ) {
+				if ( PoyOn[Edge] ) {
+					gfxDrawPolygonEdge( Edge, Poy, PoyCount, RGB_CYAN );
+				}
 			}
-			if ( PoyCount-1 == NearestEdgeIndexOfEdgedPolygon2D( Mouse, Poy, PoyOn, PoyCount ) ) {
-				Color = makecol(255, 255, 255);
-			}
-			if ( PoyOn[PoyCount-1] )
-				line( Buffer, (int)Poy[PoyCount-1].x, (int)Poy[PoyCount-1].y, (int)Poy[0].x, (int)Poy[0].y, Color );
 			
 			// Nearest point on Polygon //
 			Vector2D Point = NearestPointOnEdgedPolygon2D( Mouse, Poy, PoyOn, PoyCount );
-			circle( Buffer, (int)Point.x, (int)Point.y, 3, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( Point, 3, RGB( 0, 255, 0 ) );
 			
 			// Nearest point on the edge of the Polygon //
 			Vector2D EdgePoint = NearestPointOnEdgeOfEdgedPolygon2D( Mouse, Poy, PoyOn, PoyCount );
-			circle( Buffer, (int)EdgePoint.x, (int)EdgePoint.y, 5, makecol( 0, 255, 0 ) );
+			gfxDrawCircle( EdgePoint, 5, RGB( 0, 255, 0 ) );
 
 			// Nearest point on the edge of the Polygon //
 			Vector2D CornerPoint = NearestCornerPointOnEdgeOfEdgedPolygon2D( Mouse, Poy, PoyOn, PoyCount );
-			circle( Buffer, (int)CornerPoint.x, (int)CornerPoint.y, 7, makecol( 255, 255, 0 ) );
+			gfxDrawRadiusBox( CornerPoint, 7, RGB( 255, 255, 0 ) );
 		}
+		
+		// Testing the matrix stack //
+		gfxPushMatrix();
+		{
+//			gfxTranslate( 100, 100 );
+//			gfxScale(2);
+			
+//			static Real Orc;
+//			Orc += 0.001;
+//			gfxRotate( Orc );
 
-		
-		vsync();
-		rest(0);
-		
-		blit( Buffer, screen, 0, 0, 0, 0, Buffer->w, Buffer->h );
+//			gfxRotate( 0.01 );
+			
+			gfxDrawArrow2( Vector2D(400,300), Mouse, RGB_PUKE, Real(30) );
+		}
+		gfxPopMatrix();
+	
+		// Draw the cursor (so it's on top of everything //
+		gfxDrawCircle( Mouse, 2, RGB_WHITE );
+
+		while( key[KEY_SPACE] ) {}
+
+		// Swap display buffer to screen //
+		gfxSwapBuffer();		
 	}
 	
-	allegro_exit();
+	gfxExit();
 	return 0;
 }
 END_OF_MAIN();
