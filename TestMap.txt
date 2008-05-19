@@ -6,6 +6,13 @@ Node 350 120
 Link 0 1
 Link 1 2
 
+Rect
+Id 1
+Vertex -480 -320
+Vertex 480 320
+
+
+
 Poly
 Vertex 10 10
 Vertex 80 10

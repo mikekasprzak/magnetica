@@ -1,4 +1,6 @@
 
+#include <Geometry/Rect.h>
+
 #include <AllegroGraphics/Graphics.h>
 #include <AllegroGraphics/GraphicsDraw.h>
 
@@ -18,10 +20,26 @@ class cGame {
 public:
 	cPolyMap Map;
 	
+	int BoundsIndex;
+	
+	inline const cPolyMapElement& GetBounds() {
+		return Map.Element[BoundsIndex];
+	}
+	
 public:
 	inline cGame() :
-		Map( "TestMap.txt" )
+		Map( "TestMap.txt" ),
+		BoundsIndex( 0 )
 	{
+		// Find the bounds rectangle //
+		for ( size_t idx = 0; idx < Map.Element.size(); idx++ ) {
+			if ( Map.Element[idx].Type == PME_RECT ) {
+				if ( Map.Element[idx].Id == 1 ) {
+					BoundsIndex = idx;
+					break;
+				}
+			}
+		}		
 	}
 	
 	inline void Step() {
@@ -35,7 +53,7 @@ public:
 			// What kind of element is it? //
 			if ( Map.Element[idx].Type == PME_POLY ) {
 				// What type of Polygon is it? //
-				switch (Map.Element[idx].Type) {
+				switch (Map.Element[idx].Id) {
 					default: 
 					case 1: {
 						gfxDrawClosedPolygonWithNormals( &Map.Element[idx].Vertex[0], Map.Element[idx].Vertex.size() );
@@ -48,7 +66,7 @@ public:
 			
 			else if ( Map.Element[idx].Type == PME_SPHERE ) {
 				// What type of Sphere is it? //
-				switch (Map.Element[idx].Type) {
+				switch (Map.Element[idx].Id) {
 					default: 
 					case 1: {
 						gfxDrawCircle( Map.Element[idx].Center, Map.Element[idx].Data[0].f);
@@ -61,7 +79,7 @@ public:
 
 			else if ( Map.Element[idx].Type == PME_NODE ) {
 				// What type of Node is it? //
-				switch (Map.Element[idx].Type) {
+				switch (Map.Element[idx].Id) {
 					default: 
 					case 1: {
 						gfxDrawRadiusBox( Map.Element[idx].Center, 3 );
@@ -74,7 +92,7 @@ public:
 
 			else if ( Map.Element[idx].Type == PME_RECT ) {
 				// What type of Rectangle is it? //
-				switch (Map.Element[idx].Type) {
+				switch (Map.Element[idx].Id) {
 					default: 
 					case 1: {
 						gfxDrawRect( Map.Element[idx].Vertex[0], Map.Element[idx].Vertex[1] );
@@ -135,6 +153,30 @@ int main( int argc, char* argv[] ) {
 				if ( CameraScale < Real::One )
 					CameraScale = Real::One;
 			}
+			
+			
+			// Create View Rectangle //
+			Vector2D ScreenShape( ScreenWidth, ScreenHeight );
+			Vector2D HalfScreenShape = (ScreenShape * Real::Half);
+			Vector2D ViewShape = HalfScreenShape / CameraScale;
+
+			Rect2D ViewRect = Rect2D::Pair( 
+				(HalfScreenShape - ViewShape) - CameraPos,
+				(HalfScreenShape + ViewShape) - CameraPos
+				);
+				
+			gfxDrawRect( ViewRect.P1(), ViewRect.P2(), RGB_RED );
+
+			Rect2D InnerViewRect = Rect2D::Pair(
+				Game.GetBounds().Vertex[0] + HalfScreenShape,
+				Game.GetBounds().Vertex[1] - HalfScreenShape
+				);		
+
+			gfxDrawRect( InnerViewRect.P1(), InnerViewRect.P2(), RGB_YELLOW );
+			
+			// Restrict Camera to Zone //
+			CameraPos = InnerViewRect.ClosestPoint(CameraPos - HalfScreenShape) + HalfScreenShape;
+			
 			
 			Game.Step();
 			
