@@ -86,7 +86,13 @@ public:
 			}
 		}
 		
-		
+		// Draw Links //
+		for ( size_t idx = 0; idx < Map.Link.size(); idx++ ) {
+			//if ( Map.Link.Type == 1 )
+			{
+				gfxDrawLine( Map.Element[ Map.Link[idx].a ].Center, Map.Element[ Map.Link[idx].b ].Center );
+			}
+		}
 	}
 };
 
@@ -96,28 +102,29 @@ public:
 int main( int argc, char* argv[] ) {
 	gfxInit( 480, 320, false, 2 );
 	
-	cGame Game;
-
-
-	while( !gfxShutdown() ) {
-		gfxClearBuffer( RGB(70,0,0) );
-		
-		// Note the cursor position //
-		Vector2D Mouse(mouse_x / ScreenScalar, mouse_y / ScreenScalar);
-		
-		
-		Game.Step();
-		
-		Game.Draw();
+	{
+		cGame Game;
 	
+		while( !gfxShutdown() ) {
+			gfxClearBuffer( RGB(70,0,0) );
+			
+			// Note the cursor position //
+			Vector2D Mouse(mouse_x / ScreenScalar, mouse_y / ScreenScalar);
+			
+			
+			Game.Step();
+			
+			Game.Draw();
+		
+		
+			// Draw the cursor (so it's on top of everything //
+			gfxDrawCircle( Mouse, 2, RGB_WHITE );
 	
-		// Draw the cursor (so it's on top of everything //
-		gfxDrawCircle( Mouse, 2, RGB_WHITE );
-
-		while( key[KEY_SPACE] ) {}
-
-		// Swap display buffer to screen //
-		gfxSwapBuffer();		
+			while( key[KEY_SPACE] ) {}
+	
+			// Swap display buffer to screen //
+			gfxSwapBuffer();		
+		}
 	}
 	
 	gfxExit();

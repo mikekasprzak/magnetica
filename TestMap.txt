@@ -1,5 +1,11 @@
 // Test Map File //
 
+Node 400 40
+Node 300 80
+Node 350 120
+Link 0 1
+Link 1 2
+
 Poly
 Vertex 10 10
 Vertex 80 10
@@ -8,8 +14,6 @@ Vertex 10 80
 
 Sphere 100 100
 Radius 20
-
-Node 400 40
 
 Rect
 Vertex 40 200
