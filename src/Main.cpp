@@ -39,6 +39,7 @@ public:
 					default: 
 					case 1: {
 						gfxDrawClosedPolygonWithNormals( &Map.Element[idx].Vertex[0], Map.Element[idx].Vertex.size() );
+						gfxDrawCircle( Map.Element[idx].Center, 0 );
 									
 						break;
 					}
@@ -51,6 +52,7 @@ public:
 					default: 
 					case 1: {
 						gfxDrawCircle( Map.Element[idx].Center, Map.Element[idx].Data[0].f);
+						gfxDrawCircle( Map.Element[idx].Center, 0 );
 									
 						break;
 					}
@@ -63,6 +65,7 @@ public:
 					default: 
 					case 1: {
 						gfxDrawRadiusBox( Map.Element[idx].Center, 3 );
+						gfxDrawCircle( Map.Element[idx].Center, 0 );
 									
 						break;
 					}
@@ -75,6 +78,7 @@ public:
 					default: 
 					case 1: {
 						gfxDrawRect( Map.Element[idx].Vertex[0], Map.Element[idx].Vertex[1] );
+						gfxDrawCircle( Map.Element[idx].Center, 0 );
 									
 						break;
 					}
@@ -102,8 +106,9 @@ int main( int argc, char* argv[] ) {
 		Vector2D Mouse(mouse_x / ScreenScalar, mouse_y / ScreenScalar);
 		
 		
-		Game.Draw();
+		Game.Step();
 		
+		Game.Draw();
 	
 	
 		// Draw the cursor (so it's on top of everything //
