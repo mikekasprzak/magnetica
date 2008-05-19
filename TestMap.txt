@@ -1,0 +1,17 @@
+// Test Map File //
+
+Poly
+Vertex 10 10
+Vertex 80 10
+Vertex 80 80
+Vertex 10 80
+
+Sphere 100 100
+Radius 20
+
+Node 400 40
+
+Rect
+Vertex 40 200
+Vertex 80 230
+
