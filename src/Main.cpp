@@ -1,7 +1,6 @@
 
 #include <AllegroGraphics/Graphics.h>
 #include <AllegroGraphics/GraphicsDraw.h>
-#include <AllegroGraphics/GraphicsDraw3D.h>
 
 #include <PolyMap/PolyMap.h>
 #include <AdvancedGeometry/PointVsSphere2D.h>
