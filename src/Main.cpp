@@ -108,6 +108,9 @@ int main( int argc, char* argv[] ) {
 	
 		Vector2D MouseOld;
 		Vector2D Mouse;
+		
+		int MouseOldZ = mouse_z;
+		int MouseZ = mouse_z;
 	
 		while( !gfxShutdown() ) {
 			gfxClearBuffer( RGB(70,0,0) );
@@ -115,11 +118,22 @@ int main( int argc, char* argv[] ) {
 			
 			// Note the cursor position //
 			MouseOld = Mouse;
-			Mouse = Vector2D(mouse_x / ScreenScalar, mouse_y / ScreenScalar);
+			Mouse = Vector2D(mouse_x, mouse_y) / (ScreenScalar);
+			
+			Vector2D MouseWorld = (Mouse - CameraPos) / (CameraScale);
+			
+			MouseOldZ = MouseZ;
+			MouseZ = mouse_z;
 			
 			
-			if ( mouse_b == 1 ) {
+			if ( mouse_b == 2 ) {
 				CameraPos -= MouseOld - Mouse;
+			}
+			
+			if ( MouseZ != MouseOldZ ) {
+				CameraScale += Real(MouseOldZ - MouseZ) * Real(0.1);
+				if ( CameraScale < Real::One )
+					CameraScale = Real::One;
 			}
 			
 			Game.Step();
@@ -128,7 +142,7 @@ int main( int argc, char* argv[] ) {
 		
 		
 			// Draw the cursor (so it's on top of everything //
-			gfxDrawCircle( Mouse - CameraPos, 2, RGB_WHITE );
+			gfxDrawCircle( MouseWorld, 2, RGB_WHITE );
 	
 			while( key[KEY_SPACE] ) {}
 	
