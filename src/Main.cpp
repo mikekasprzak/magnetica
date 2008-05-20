@@ -132,7 +132,6 @@ int main( int argc, char* argv[] ) {
 	
 		while( !gfxShutdown() ) {
 			gfxClearBuffer( RGB(70,0,0) );
-			gfxSetMatrixToCamera();
 			
 			// Note the cursor position //
 			MouseOld = Mouse;
@@ -170,33 +169,22 @@ int main( int argc, char* argv[] ) {
 					CameraScale = Real(4);
 			}
 			
-			
-			// Create View Rectangle //
-
-//			Rect2D ViewRect = Rect2D::Pair( 
-//				(HalfScreenShape - HalfViewShape) - CameraPos,
-//				(HalfScreenShape + HalfViewShape) - CameraPos
-//				);
-//				
-//			gfxDrawRect( ViewRect.P1(), ViewRect.P2(), RGB_RED );
-
 			// Create a rectangle, contracting it's shape by the current size of the zoomed view //
 			Rect2D InnerViewRect = Rect2D::Pair(
 				Game.GetBounds().Vertex[0] + HalfViewShape,
 				Game.GetBounds().Vertex[1] - HalfViewShape
 				);		
-
-			//gfxDrawRect( InnerViewRect.P1(), InnerViewRect.P2(), RGB_YELLOW );
 			
 			// Restrict Camera to Zone //
-//			CameraPos = InnerViewRect.ClosestPoint(CameraPos - HalfViewShape) + HalfViewShape;
 			CameraPos = InnerViewRect.ClosestPoint(CameraPos);
-			// TODO: The shape thing here should be done internally.  I.e. CameraPos isn't currently
-			//   the center of the screen. //
+			
+			
 			
 			
 			// Step the game //
 			Game.Step();
+			
+			gfxSetMatrixToCamera();
 			
 			// Draw the game //
 			Game.Draw();
