@@ -137,46 +137,62 @@ int main( int argc, char* argv[] ) {
 			// Note the cursor position //
 			MouseOld = Mouse;
 			Mouse = Vector2D(mouse_x, mouse_y) / (ScreenScalar);
+
+
+			Vector2D ScreenShape( ScreenWidth, ScreenHeight );
+			Vector2D HalfScreenShape = (ScreenShape * Real::Half);
+
+			Vector2D ViewShape = ScreenShape * CameraScale;
+			Vector2D HalfViewShape = ViewShape * Real::Half;
+
+
+			Vector2D MouseWorld;
+			MouseWorld.x = (Mouse.x * ViewShape.x) / ScreenShape.x;
+			MouseWorld.y = (Mouse.y * ViewShape.y) / ScreenShape.y;
+			MouseWorld -= HalfViewShape;
+			MouseWorld -= CameraPos;
 			
-			Vector2D MouseWorld = (Mouse - CameraPos) / (CameraScale);
 			
 			MouseOldZ = MouseZ;
 			MouseZ = mouse_z;
 			
 			
 			if ( mouse_b == 2 ) {
-				CameraPos -= MouseOld - Mouse;
+				CameraPos -= (MouseOld - Mouse) * CameraScale;
 			}
 			
 			if ( MouseZ != MouseOldZ ) {
 				CameraScale += Real(MouseOldZ - MouseZ) * Real(0.1);
 				if ( CameraScale < Real::One )
 					CameraScale = Real::One;
+
+				if ( CameraScale > Real(4) )
+					CameraScale = Real(4);
 			}
 			
 			
 			// Create View Rectangle //
-			Vector2D ScreenShape( ScreenWidth, ScreenHeight );
-			Vector2D HalfScreenShape = (ScreenShape * Real::Half);
-			Vector2D ViewShape = HalfScreenShape / CameraScale;
 
-			Rect2D ViewRect = Rect2D::Pair( 
-				(HalfScreenShape - ViewShape) - CameraPos,
-				(HalfScreenShape + ViewShape) - CameraPos
-				);
-				
-			gfxDrawRect( ViewRect.P1(), ViewRect.P2(), RGB_RED );
+//			Rect2D ViewRect = Rect2D::Pair( 
+//				(HalfScreenShape - HalfViewShape) - CameraPos,
+//				(HalfScreenShape + HalfViewShape) - CameraPos
+//				);
+//				
+//			gfxDrawRect( ViewRect.P1(), ViewRect.P2(), RGB_RED );
 
+			// Create a rectangle, contracting it's shape by the current size of the zoomed view //
 			Rect2D InnerViewRect = Rect2D::Pair(
-				Game.GetBounds().Vertex[0] + HalfScreenShape,
-				Game.GetBounds().Vertex[1] - HalfScreenShape
+				Game.GetBounds().Vertex[0] + HalfViewShape,
+				Game.GetBounds().Vertex[1] - HalfViewShape
 				);		
 
-			gfxDrawRect( InnerViewRect.P1(), InnerViewRect.P2(), RGB_YELLOW );
+			//gfxDrawRect( InnerViewRect.P1(), InnerViewRect.P2(), RGB_YELLOW );
 			
 			// Restrict Camera to Zone //
-			CameraPos = InnerViewRect.ClosestPoint(CameraPos - HalfScreenShape) + HalfScreenShape;
-			
+//			CameraPos = InnerViewRect.ClosestPoint(CameraPos - HalfViewShape) + HalfViewShape;
+			CameraPos = InnerViewRect.ClosestPoint(CameraPos);
+			// TODO: The shape thing here should be done internally.  I.e. CameraPos isn't currently
+			//   the center of the screen. //
 			
 			
 			// Step the game //
@@ -190,12 +206,12 @@ int main( int argc, char* argv[] ) {
 			gfxDrawCircle( MouseWorld, 2, RGB_WHITE );
 			
 			// Draw center cross //
-			gfxDrawCross( HalfScreenShape - CameraPos, 4 );
+			gfxDrawCross( (Vector2D::Zero - CameraPos), 4 );
 	
 			while( key[KEY_SPACE] ) {}
 	
 			// Swap display buffer to screen //
-			gfxSwapBuffer();		
+			gfxSwapBuffer();
 		}
 	}
 	

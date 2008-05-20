@@ -8,16 +8,19 @@ Link 1 2
 
 Rect
 Id 1
-Vertex -480 -320
-Vertex 480 320
+Vertex -960 -640
+Vertex 960 640
 
+Rect
+Vertex -950 -630
+Vertex 950 630
 
 
 Poly
 Vertex 10 10
 Vertex 80 10
-Vertex 80 80
-Vertex 10 80
+Vertex 70 120
+Vertex 20 120
 
 Sphere 100 100
 Radius 20
