@@ -184,17 +184,22 @@ int main( int argc, char* argv[] ) {
 			// Step the game //
 			Game.Step();
 			
-			gfxSetMatrixToCamera();
-			
+			// Prior to drawing, set the current matrix to suit drawing relative to the camera //
+			gfxSetCameraMatrix();
 			// Draw the game //
 			Game.Draw();
-		
-		
-			// Draw the cursor (so it's on top of everything //
-			gfxDrawCircle( MouseWorld, 2, RGB_WHITE );
-			
+					
 			// Draw center cross //
 			gfxDrawCross( (Vector2D::Zero - CameraPos), 4 );
+
+//			// Draw the cursor (last, so it's on top of everything //
+//			gfxDrawCircle( MouseWorld, 2, RGB_WHITE );
+			
+			
+			// Draw cursors and hud stuffs in screen space, as opposed to camera space //
+			gfxSetScreenMatrix();
+			// Draw the cursor (last, so it's on top of everything //
+			gfxDrawCircle( Mouse, 2, RGB_WHITE );			
 	
 			while( key[KEY_SPACE] ) {}
 	
