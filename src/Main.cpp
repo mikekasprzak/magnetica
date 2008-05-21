@@ -124,33 +124,12 @@ int main( int argc, char* argv[] ) {
 	{
 		cGame Game;
 	
-//		Vector2D MouseOld;
-//		Vector2D Mouse;
-//		
-//		int MouseOldZ = mouse_z;
-//		int MouseZ = mouse_z;
-	
 		while( !gfxShutdown() ) {
 			gfxClearBuffer( RGB(70,0,0) );
-						
-			// Note the cursor position //
-//			MouseOld = Mouse;
-//			Mouse = Vector2D(mouse_x, mouse_y) / (Screen::Scalar);
-//			Mouse -= Screen::HalfShape;
 			
 			Mouse.Update();
 			Camera.Update();
 
-
-//			Vector2D MouseWorld;
-//			MouseWorld.x = (Mouse.x * CurrentCamera->ViewShape.x) / Screen::Shape.x;
-//			MouseWorld.y = (Mouse.y * CurrentCamera->ViewShape.y) / Screen::Shape.y;
-//			MouseWorld -= gfxGetCameraPos();
-			
-			
-//			MouseOldZ = MouseZ;
-//			MouseZ = mouse_z;
-			
 			
 			if ( mouse_b == 2 ) {
 				gfxSetCameraPos( gfxGetCameraPos() - (Mouse.Diff() * gfxGetCameraScale()) );
@@ -189,13 +168,13 @@ int main( int argc, char* argv[] ) {
 			gfxDrawCross( (Vector2D::Zero - gfxGetCameraPos()), 4 );
 
 			// Draw the cursor (last, so it's on top of everything) //
-			gfxDrawCircle( Camera.Mouse, 2, RGB_YELLOW );
+//			gfxDrawCircle( Camera.Mouse, 2, RGB_YELLOW );
 		
 			
 			// Draw cursors and hud stuffs in screen space, as opposed to camera space //
 			gfxSetScreenMatrix();
 			// Draw the cursor (last, so it's on top of everything) //
-//			gfxDrawCircle( Mouse.Pos, 2, RGB_WHITE );
+			gfxDrawCircle( Mouse.Pos, 2, RGB_WHITE );
 	
 			while( key[KEY_SPACE] ) {}
 	
