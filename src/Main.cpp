@@ -140,8 +140,8 @@ int main( int argc, char* argv[] ) {
 
 
 			Vector2D MouseWorld;
-			MouseWorld.x = (Mouse.x * ViewShape.x) / Screen::Shape.x;
-			MouseWorld.y = (Mouse.y * ViewShape.y) / Screen::Shape.y;
+			MouseWorld.x = (Mouse.x * CurrentCamera->ViewShape.x) / Screen::Shape.x;
+			MouseWorld.y = (Mouse.y * CurrentCamera->ViewShape.y) / Screen::Shape.y;
 			MouseWorld -= gfxGetCameraPos();
 			
 			
@@ -164,8 +164,8 @@ int main( int argc, char* argv[] ) {
 			
 			// Create a rectangle, contracting it's shape by the current size of the zoomed view //
 			Rect2D InnerViewRect = Rect2D::Pair(
-				Game.GetBounds().Vertex[0] + HalfViewShape,
-				Game.GetBounds().Vertex[1] - HalfViewShape
+				Game.GetBounds().Vertex[0] + CurrentCamera->ViewHalfShape,
+				Game.GetBounds().Vertex[1] - CurrentCamera->ViewHalfShape
 				);		
 			
 			// Restrict Camera to Zone //
