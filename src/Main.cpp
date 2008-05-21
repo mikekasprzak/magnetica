@@ -124,37 +124,40 @@ int main( int argc, char* argv[] ) {
 	{
 		cGame Game;
 	
-		Vector2D MouseOld;
-		Vector2D Mouse;
-		
-		int MouseOldZ = mouse_z;
-		int MouseZ = mouse_z;
+//		Vector2D MouseOld;
+//		Vector2D Mouse;
+//		
+//		int MouseOldZ = mouse_z;
+//		int MouseZ = mouse_z;
 	
 		while( !gfxShutdown() ) {
 			gfxClearBuffer( RGB(70,0,0) );
 						
 			// Note the cursor position //
-			MouseOld = Mouse;
-			Mouse = Vector2D(mouse_x, mouse_y) / (Screen::Scalar);
-			Mouse -= Screen::HalfShape;
+//			MouseOld = Mouse;
+//			Mouse = Vector2D(mouse_x, mouse_y) / (Screen::Scalar);
+//			Mouse -= Screen::HalfShape;
+			
+			Mouse.Update();
+			Camera.Update();
 
 
-			Vector2D MouseWorld;
-			MouseWorld.x = (Mouse.x * CurrentCamera->ViewShape.x) / Screen::Shape.x;
-			MouseWorld.y = (Mouse.y * CurrentCamera->ViewShape.y) / Screen::Shape.y;
-			MouseWorld -= gfxGetCameraPos();
+//			Vector2D MouseWorld;
+//			MouseWorld.x = (Mouse.x * CurrentCamera->ViewShape.x) / Screen::Shape.x;
+//			MouseWorld.y = (Mouse.y * CurrentCamera->ViewShape.y) / Screen::Shape.y;
+//			MouseWorld -= gfxGetCameraPos();
 			
 			
-			MouseOldZ = MouseZ;
-			MouseZ = mouse_z;
+//			MouseOldZ = MouseZ;
+//			MouseZ = mouse_z;
 			
 			
 			if ( mouse_b == 2 ) {
-				gfxSetCameraPos( gfxGetCameraPos() - ((MouseOld - Mouse) * gfxGetCameraScale()) );
+				gfxSetCameraPos( gfxGetCameraPos() - (Mouse.Diff() * gfxGetCameraScale()) );
 			}
 			
-			if ( MouseZ != MouseOldZ ) {
-				gfxSetCameraScale( gfxGetCameraScale() + (Real(MouseOldZ - MouseZ) * Real(0.1)) );
+			if ( Mouse.WheelDiff() ) {
+				gfxSetCameraScale( gfxGetCameraScale() + ( Real(Mouse.WheelDiff()) * Real(0.1)) );
 				if ( gfxGetCameraScale() < Real::One )
 					gfxSetCameraScale( Real::One );
 
@@ -166,7 +169,7 @@ int main( int argc, char* argv[] ) {
 			Rect2D InnerViewRect = Rect2D::Pair(
 				Game.GetBounds().Vertex[0] + CurrentCamera->ViewHalfShape,
 				Game.GetBounds().Vertex[1] - CurrentCamera->ViewHalfShape
-				);		
+				);
 			
 			// Restrict Camera to Zone //
 			gfxSetCameraPos( InnerViewRect.ClosestPoint(gfxGetCameraPos()) );
@@ -185,14 +188,14 @@ int main( int argc, char* argv[] ) {
 			// Draw center cross //
 			gfxDrawCross( (Vector2D::Zero - gfxGetCameraPos()), 4 );
 
-//			// Draw the cursor (last, so it's on top of everything) //
-//			gfxDrawCircle( MouseWorld, 2, RGB_YELLOW );
-			
+			// Draw the cursor (last, so it's on top of everything) //
+			gfxDrawCircle( Camera.Mouse, 2, RGB_YELLOW );
+		
 			
 			// Draw cursors and hud stuffs in screen space, as opposed to camera space //
 			gfxSetScreenMatrix();
 			// Draw the cursor (last, so it's on top of everything) //
-			gfxDrawCircle( Mouse, 2, RGB_WHITE );
+//			gfxDrawCircle( Mouse.Pos, 2, RGB_WHITE );
 	
 			while( key[KEY_SPACE] ) {}
 	
