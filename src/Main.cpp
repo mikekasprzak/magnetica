@@ -134,26 +134,12 @@ int main( int argc, char* argv[] ) {
 			if ( mouse_b == 2 ) {
 				gfxSetCameraPos( gfxGetCameraPos() - (Mouse.Diff() * gfxGetCameraScale()) );
 			}
+			gfxConstrainCamera( Game.GetBounds().Vertex[0], Game.GetBounds().Vertex[1] );			
 			
 			if ( Mouse.WheelDiff() ) {
-				gfxSetCameraScale( gfxGetCameraScale() + ( Real(Mouse.WheelDiff()) * Real(0.1)) );
-				if ( gfxGetCameraScale() < Real::One )
-					gfxSetCameraScale( Real::One );
-
-				if ( gfxGetCameraScale() > Real(4) )
-					gfxSetCameraScale( Real(4) );
+				gfxAddCameraScale( Real(Mouse.WheelDiff()) * Real(0.1) );
+				gfxConstrainCameraScale( Real::One, Real(4) );
 			}
-			
-			// Create a rectangle, contracting it's shape by the current size of the zoomed view //
-			Rect2D InnerViewRect = Rect2D::Pair(
-				Game.GetBounds().Vertex[0] + CurrentCamera->ViewHalfShape,
-				Game.GetBounds().Vertex[1] - CurrentCamera->ViewHalfShape
-				);
-			
-			// Restrict Camera to Zone //
-			gfxSetCameraPos( InnerViewRect.ClosestPoint(gfxGetCameraPos()) );
-			
-			
 			
 			
 			// Step the game //
