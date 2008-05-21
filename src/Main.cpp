@@ -132,24 +132,17 @@ int main( int argc, char* argv[] ) {
 	
 		while( !gfxShutdown() ) {
 			gfxClearBuffer( RGB(70,0,0) );
-			
+						
 			// Note the cursor position //
 			MouseOld = Mouse;
-			Mouse = Vector2D(mouse_x, mouse_y) / (ScreenScalar);
-
-
-			Vector2D ScreenShape( ScreenWidth, ScreenHeight );
-			Vector2D HalfScreenShape = (ScreenShape * Real::Half);
-
-			Vector2D ViewShape = ScreenShape * CameraScale;
-			Vector2D HalfViewShape = ViewShape * Real::Half;
+			Mouse = Vector2D(mouse_x, mouse_y) / (Screen::Scalar);
+			Mouse -= Screen::HalfShape;
 
 
 			Vector2D MouseWorld;
-			MouseWorld.x = (Mouse.x * ViewShape.x) / ScreenShape.x;
-			MouseWorld.y = (Mouse.y * ViewShape.y) / ScreenShape.y;
-			MouseWorld -= HalfViewShape;
-			MouseWorld -= CameraPos;
+			MouseWorld.x = (Mouse.x * ViewShape.x) / Screen::Shape.x;
+			MouseWorld.y = (Mouse.y * ViewShape.y) / Screen::Shape.y;
+			MouseWorld -= gfxGetCameraPos();
 			
 			
 			MouseOldZ = MouseZ;
@@ -157,16 +150,16 @@ int main( int argc, char* argv[] ) {
 			
 			
 			if ( mouse_b == 2 ) {
-				CameraPos -= (MouseOld - Mouse) * CameraScale;
+				gfxSetCameraPos( gfxGetCameraPos() - ((MouseOld - Mouse) * gfxGetCameraScale()) );
 			}
 			
 			if ( MouseZ != MouseOldZ ) {
-				CameraScale += Real(MouseOldZ - MouseZ) * Real(0.1);
-				if ( CameraScale < Real::One )
-					CameraScale = Real::One;
+				gfxSetCameraScale( gfxGetCameraScale() + (Real(MouseOldZ - MouseZ) * Real(0.1)) );
+				if ( gfxGetCameraScale() < Real::One )
+					gfxSetCameraScale( Real::One );
 
-				if ( CameraScale > Real(4) )
-					CameraScale = Real(4);
+				if ( gfxGetCameraScale() > Real(4) )
+					gfxSetCameraScale( Real(4) );
 			}
 			
 			// Create a rectangle, contracting it's shape by the current size of the zoomed view //
@@ -176,7 +169,7 @@ int main( int argc, char* argv[] ) {
 				);		
 			
 			// Restrict Camera to Zone //
-			CameraPos = InnerViewRect.ClosestPoint(CameraPos);
+			gfxSetCameraPos( InnerViewRect.ClosestPoint(gfxGetCameraPos()) );
 			
 			
 			
@@ -190,16 +183,16 @@ int main( int argc, char* argv[] ) {
 			Game.Draw();
 					
 			// Draw center cross //
-			gfxDrawCross( (Vector2D::Zero - CameraPos), 4 );
+			gfxDrawCross( (Vector2D::Zero - gfxGetCameraPos()), 4 );
 
-//			// Draw the cursor (last, so it's on top of everything //
-//			gfxDrawCircle( MouseWorld, 2, RGB_WHITE );
+//			// Draw the cursor (last, so it's on top of everything) //
+//			gfxDrawCircle( MouseWorld, 2, RGB_YELLOW );
 			
 			
 			// Draw cursors and hud stuffs in screen space, as opposed to camera space //
 			gfxSetScreenMatrix();
-			// Draw the cursor (last, so it's on top of everything //
-			gfxDrawCircle( Mouse, 2, RGB_WHITE );			
+			// Draw the cursor (last, so it's on top of everything) //
+			gfxDrawCircle( Mouse, 2, RGB_WHITE );
 	
 			while( key[KEY_SPACE] ) {}
 	
