@@ -14,10 +14,32 @@
 #include <AdvancedGeometry/PointVsPolygon2D.h>
 #include <AdvancedGeometry/PointVsEdgedPolygon2D.h>
 // - ------------------------------------------------------------------------------------------ - //
+// - ------------------------------------------------------------------------------------------ - //
+//// A Fermion is the term used to described particles 
+//class cFermion {
+//public:
+//	// +1 - Proton (Baryon)
+//	//  0 - Neutron (Baryon)
+//	
+//	// +1 - Positron (Lepton)
+//	// -1 - Electron (Lepton)
+//	int Charge;
+//	
+//};
+//
+//class cMagnet {
+//public:	
+//};
+
+// - ------------------------------------------------------------------------------------------ - //
 class cGame {
 public:
 	cPolyMap Map;
-	
+
+	//std::vector<
+
+
+public:
 	int BoundsIndex;
 	
 	inline const cPolyMapElement& GetBounds() {
