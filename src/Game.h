@@ -23,7 +23,7 @@
 // '1' - Default Repel/Attract value (either + or -)
 // - ------------------------------------------------------------------------------------------ - //
 // Returns -1, 0, or +1, the polarity action to take //
-inline int SolvePolarity( const int a, const int b ) {
+inline const int SolvePolarity( const int a, const int b ) {
 	// Determine the sign of the 'a' polarity //
 	int a_sign = 0;
 	if ( a > 0 )
@@ -72,7 +72,6 @@ inline int SolvePolarity( const int a, const int b ) {
 // - ------------------------------------------------------------------------------------------ - //
 
 // - ------------------------------------------------------------------------------------------ - //
-
 class cImpulse {
 public:
 };
@@ -85,22 +84,40 @@ public:
 	int Polarity;
 
 public:
-	cParticle( const Vector2D& _StartPos, const Vector2D& _Direction ) :
+	cParticle( const Vector2D& _StartPos, const Vector2D& _Direction, const int _Polarity = 0 ) :
 		Pos( _StartPos ),
 		Old( _StartPos - _Direction ),
-		Radius( 4 )
+		Radius( 4 ),
+		Polarity( _Polarity )
 	{
 	}
+	
+	// TODO: Add constructor that takes a PolyMapElement or Generator, and does the random calculation //
 };
-
+// - ------------------------------------------------------------------------------------------ - //
 class cGenerator {
 public:
 	Vector2D Pos;
 	Real Radius;
 	
 	int Count;
-};
 
+public:
+	inline cGenerator( const Vector2D& _Pos, const Real _Radius, const int _Count ) :
+		Pos( _Pos ),
+		Radius( _Radius ),
+		Count( _Count )
+	{
+	}
+	
+	inline cGenerator( const cPolyMapElement& Element ) :
+		Pos( Element.Center ),
+		Radius( Element.Data[0].f ),
+		Count( Element.Info )
+	{
+	}
+};
+// - ------------------------------------------------------------------------------------------ - //
 class cCollector { 
 public:
 	Vector2D Pos;
@@ -108,15 +125,46 @@ public:
 	
 	int Count;
 	int Quota;
+public:
+	inline cCollector( const Vector2D& _Pos, const Real _Radius, const int _Quota ) :
+		Pos( _Pos ),
+		Radius( _Radius ),
+		Count( 0 ),
+		Quota( _Quota )
+	{
+	}
+	
+	inline cCollector( const cPolyMapElement& Element ) :
+		Pos( Element.Center ),
+		Radius( Element.Data[0].f ),
+		Count( 0 ),
+		Quota( Element.Info )
+	{
+	}
 };
-
+// - ------------------------------------------------------------------------------------------ - //
 class cMagnet {
 public:
 	Vector2D Pos;
 	Real Radius;
 	
 	int Polarity;
+public:
+	inline cMagnet( const Vector2D& _Pos, const Real _Radius, const int _Polarity ) :
+		Pos( _Pos ),
+		Radius( _Radius ),
+		Polarity( _Polarity )
+	{
+	}
+	
+	inline cMagnet( const cPolyMapElement& Element ) :
+		Pos( Element.Center ),
+		Radius( Element.Data[0].f ),
+		Polarity( Element.Info )
+	{
+	}	
 };
+// - ------------------------------------------------------------------------------------------ - //
 
 // - ------------------------------------------------------------------------------------------ - //
 class cGame {
