@@ -74,8 +74,13 @@ inline const int SolvePolarity( const int a, const int b ) {
 // - ------------------------------------------------------------------------------------------ - //
 class cImpulse {
 public:
+	Vector2D Pos;
+	Real InRadius;
+	Real OutRadius;
+public:
+	
 };
-
+// - ------------------------------------------------------------------------------------------ - //
 class cParticle {
 public:
 	Vector2D Pos, Old;
@@ -100,12 +105,15 @@ public:
 	Vector2D Pos;
 	Real Radius;
 	
+	Vector2D Direction;
+	
 	int Count;
 
 public:
 	inline cGenerator( const Vector2D& _Pos, const Real _Radius, const int _Count ) :
 		Pos( _Pos ),
 		Radius( _Radius ),
+		Direction( Vector2D( 0, 1 ) ),
 		Count( _Count )
 	{
 	}
@@ -202,15 +210,19 @@ public:
 			else if ( Map.Element[idx].Type == PME_SPHERE ) {
 				// What type of Sphere is it? //
 				switch (Map.Element[idx].Id) {
-					default: 
 					case 1: {
 						// Generator //
-						
+						Generator.push_back( cGenerator(Map.Element[idx]) );
 						break;
 					}
-					case 2: {
+					case 11: {
 						// Collector //
-						
+						Collector.push_back( cCollector(Map.Element[idx]) );
+						break;
+					}
+					case 21: {
+						// Magnet //
+						Magnet.push_back( cMagnet(Map.Element[idx]) );
 						break;
 					}
 				};
