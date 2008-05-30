@@ -14,30 +14,122 @@
 #include <AdvancedGeometry/PointVsPolygon2D.h>
 #include <AdvancedGeometry/PointVsEdgedPolygon2D.h>
 // - ------------------------------------------------------------------------------------------ - //
+
 // - ------------------------------------------------------------------------------------------ - //
-//// A Fermion is the term used to described particles 
-//class cFermion {
-//public:
-//	// +1 - Proton (Baryon)
-//	//  0 - Neutron (Baryon)
-//	
-//	// +1 - Positron (Lepton)
-//	// -1 - Electron (Lepton)
-//	int Charge;
-//	
-//};
-//
-//class cMagnet {
-//public:	
-//};
+// Inputs //
+// '+' - Positive or Repel (increase distance)
+// '-' - Negative or Attract (decrease distance)
+// '0' - Neutral (Will follow whatever default behavior)
+// '1' - Default Repel/Attract value (either + or -)
+// - ------------------------------------------------------------------------------------------ - //
+// Returns -1, 0, or +1, the polarity action to take //
+inline int SolvePolarity( const int a, const int b ) {
+	// Determine the sign of the 'a' polarity //
+	int a_sign = 0;
+	if ( a > 0 )
+		a_sign = 1;
+	else if ( a < 0 )
+		a_sign = -1;
+	// Note the intensity of the 'a' polarity //
+	//int a_intensity = abs(a);
+	
+	// Determine the sign of the 'b' polarity //
+	int b_sign = 0;
+	if ( b > 0 )
+		b_sign = 1;
+	else if ( b < 0 )
+		b_sign = -1;
+	// Note the intensity of the 'b' polarity //
+	//int b_intensity = abs(b);
+	
+	// If signs are different //
+	if ( a_sign != b_sign ) {
+		// The special case if a is ever zero, do nothing //
+		if ( a_sign == 0 ) {
+			return 0;
+		}
+		// If b's sign is zero, follow the behavior of a's sign //
+		else if ( b_sign == 0 ) {
+			return a_sign;
+		}
+		// Default behavior is to Attract on sign difference //
+		else {
+			return -1;
+		}
+	}
+	// Otherwise the signs are the same //
+	else {
+		// If the signs are both zero, it has no effect //
+		if ( a_sign == 0 ) {
+			return 0;
+		}
+		// Default Behavior is to Repel on sign equality //
+		else {
+			return +1;
+		}
+	}
+}
+// - ------------------------------------------------------------------------------------------ - //
+
+// - ------------------------------------------------------------------------------------------ - //
+
+class cImpulse {
+public:
+};
+
+class cParticle {
+public:
+	Vector2D Pos, Old;
+	Real Radius;
+	
+	int Polarity;
+
+public:
+	cParticle( const Vector2D& _StartPos, const Vector2D& _Direction ) :
+		Pos( _StartPos ),
+		Old( _StartPos - _Direction ),
+		Radius( 4 )
+	{
+	}
+};
+
+class cGenerator {
+public:
+	Vector2D Pos;
+	Real Radius;
+	
+	int Count;
+};
+
+class cCollector { 
+public:
+	Vector2D Pos;
+	Real Radius;
+	
+	int Count;
+	int Quota;
+};
+
+class cMagnet {
+public:
+	Vector2D Pos;
+	Real Radius;
+	
+	int Polarity;
+};
 
 // - ------------------------------------------------------------------------------------------ - //
 class cGame {
 public:
 	cPolyMap Map;
 
-	//std::vector<
-
+	std::vector<cImpulse> Impulse;
+	std::vector<cParticle> Particle;
+		
+	std::vector<cGenerator> Generator;
+	std::vector<cCollector> Collector;
+	std::vector<cMagnet> Magnet;
+	
 
 public:
 	int BoundsIndex;
@@ -59,11 +151,30 @@ public:
 					break;
 				}
 			}
+			else if ( Map.Element[idx].Type == PME_SPHERE ) {
+				// What type of Sphere is it? //
+				switch (Map.Element[idx].Id) {
+					default: 
+					case 1: {
+						// Generator //
+						
+						break;
+					}
+					case 2: {
+						// Collector //
+						
+						break;
+					}
+				};
+			}
 		}		
 	}
 	
 	inline void Step() {
-		
+//		// Step Elements //
+//		for ( size_t idx = 0; idx < Map.Element.size(); idx++ ) {
+//
+//		}
 	}
 	
 	
