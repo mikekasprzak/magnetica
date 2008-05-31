@@ -75,8 +75,12 @@ inline const int SolvePolarity( const int a, const int b ) {
 class cImpulse {
 public:
 	Vector2D Pos;
-	Real InRadius;
-	Real OutRadius;
+	
+	Real InnerRadius;
+	Real InnerForce;
+	
+	Real OuterRadius;
+	Real OuterForce;
 public:
 	
 };
