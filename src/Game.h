@@ -162,8 +162,13 @@ public:
 	}
 	
 	inline void AddReflection( const Vector2D& _ContactNormal ) {
-		Contacts++;
-		Reflection += (Velocity() * _ContactNormal) * _ContactNormal;
+		Real ReflectionStrength = (Velocity() * _ContactNormal);
+		
+		// This doesn't appear to help ... yet //
+		if ( ReflectionStrength > Real::Zero ) {
+			Contacts++;
+			Reflection += ReflectionStrength * _ContactNormal;
+		}
 	}
 public:	
 	inline void Step() {
@@ -448,6 +453,10 @@ public:
 			// Test for Collisions Vs. Polygons //
 			for ( size_t idx2 = 0; idx2 < Collision.size(); idx2++ ) {
 				if ( TestPointVsPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() ) ) {
+					// TODO: There is a bug here.  Points don't always reflect correctly.  They
+					//   do most of the time, but not always.  I think it has something to do with
+					//   causing a reflection with a reversed velocity against the surface.
+					
 					Vector2D EdgePoint = NearestPointOnEdgeOfPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() );
 					Particle[idx].AddReflection( NearestEdgeNormalOfPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() ) );
 					
