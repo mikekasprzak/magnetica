@@ -186,7 +186,7 @@ public:
 	
 	inline void Draw() { 
 		if ( Enabled && Count ) {
-			gfxDrawCircle( Pos, Radius, RGB_SKY );
+			gfxDrawCircle( Pos, ((Ticks>>2) == 0) ? Radius - Real(2) : Radius, RGB_SKY );
 		}
 		else {
 			gfxDrawCircle( Pos, Radius, RGB_BLUE );			
@@ -224,7 +224,10 @@ public:
 	}
 	
 	inline void Draw() { 
-		gfxDrawCircle( Pos, Radius, RGB_GREEN );
+		if ( Count >= Quota )
+			gfxDrawCircle( Pos, Radius, RGB_YELLOW );
+		else
+			gfxDrawCircle( Pos, Radius, RGB_GREEN );
 	}
 };
 // - ------------------------------------------------------------------------------------------ - //
@@ -346,6 +349,19 @@ public:
 		// Step all Particles //
 		for ( size_t idx = 0; idx < Particle.size(); idx++ ) {
 			Particle[idx].Step();
+			
+			// Test for Collisions Vs. Collectors //
+			for ( size_t idx2 = 0; idx2 < Collector.size(); idx2++ ) {
+				if ( TestPointVsSphere2D( Particle[idx].Pos, Collector[idx2].Pos, Collector[idx2].Radius ) ) {
+					Collector[idx2].Count++;
+					
+					// Kill Particle //
+					Particle[idx].Pos = Vector2D(0,0);
+					Particle[idx].Old = Vector2D(0,0);
+				}
+			}
+			
+			
 		}
 
 		// Remove all Impulses //
