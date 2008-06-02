@@ -17,8 +17,8 @@ Vertex 950 630
 
 
 Poly
-Vertex 10 10
-Vertex 80 10
+Vertex 10 -210
+Vertex 80 -210
 Vertex 70 120
 Vertex 20 120
 

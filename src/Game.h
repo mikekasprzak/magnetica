@@ -329,6 +329,9 @@ public:
 	std::vector<cCollector> Collector;
 	std::vector<cMagnet> Magnet;
 	
+	// Note all the collision Polygons //
+	std::vector<cPolyMapElement*> Collision;
+	
 
 public:
 	int BoundsIndex;
@@ -377,6 +380,10 @@ public:
 					}
 				};
 			}
+			else if ( Map.Element[idx].Type == PME_POLY ) {
+				// For now, asume all polygons are collision //
+				Collision.push_back( &Map.Element[idx] );
+			}
 		}		
 	}
 	
@@ -418,7 +425,15 @@ public:
 			for ( size_t idx2 = 0; idx2 < Impulse.size(); idx2++ ) {
 				Particle[idx].AddForce( Impulse[idx2].GetForce( Particle[idx].Pos ) );
 			}
-
+			
+			// Test for Collisions Vs. Polygons //
+			for ( size_t idx2 = 0; idx2 < Collision.size(); idx2++ ) {
+				printf("Test\n");
+				if ( TestPointVsPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() ) ) {
+					Vector2D EdgePoint = NearestPointOnEdgeOfPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() );
+					Particle[idx].Pos = EdgePoint;
+				}
+			}
 		
 			// Test for Collisions Vs. Collectors //
 			for ( size_t idx2 = 0; idx2 < Collector.size(); idx2++ ) {
@@ -467,7 +482,7 @@ public:
 				switch (Map.Element[idx].Id) {
 					default: 
 					case 1: {
-						gfxDrawClosedPolygonWithNormals( &Map.Element[idx].Vertex[0], Map.Element[idx].Vertex.size() );
+						gfxDrawClosedPolygonWithNormals( &Map.Element[idx].Vertex[0], Map.Element[idx].Vertex.size(), RGB_PUKE );
 						gfxDrawCircle( Map.Element[idx].Center, 0 );
 									
 						break;
