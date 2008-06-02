@@ -1,0 +1,22 @@
+"Generator (= Neutral Particles)" 2
+
+
+
+
+
+
+
+
+
+"Collector (-1 Attraction)" 2
+
+
+
+
+
+
+
+
+
+"Magnet (-1 Attraction)" 2
+"Magnet (+1 Repulsion)" 2

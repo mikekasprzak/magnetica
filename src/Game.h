@@ -125,7 +125,7 @@ public:
 	inline cGenerator( const cPolyMapElement& Element ) :
 		Pos( Element.Center ),
 		Radius( Element.Data[0].f ),
-		Count( Element.Info )
+		Count( Element.Data[1].i )
 	{
 	}
 };
@@ -150,7 +150,7 @@ public:
 		Pos( Element.Center ),
 		Radius( Element.Data[0].f ),
 		Count( 0 ),
-		Quota( Element.Info )
+		Quota( Element.Data[1].i )
 	{
 	}
 };
@@ -172,7 +172,7 @@ public:
 	inline cMagnet( const cPolyMapElement& Element ) :
 		Pos( Element.Center ),
 		Radius( Element.Data[0].f ),
-		Polarity( Element.Info )
+		Polarity( Element.Data[1].i )
 	{
 	}	
 };
