@@ -337,6 +337,7 @@ public:
 	int BoundsIndex;
 	
 	inline const cPolyMapElement& GetBounds() {
+		// TODO: Make this instead give a rectangle, or some identifyable value for none //
 		return Map.Element[BoundsIndex];
 	}
 	
@@ -350,17 +351,19 @@ public:
 		Generator.push_back( cGenerator( Vector2D( 0, 0 ), 12, 30 ) );
 		Collector.push_back( cCollector( Vector2D( 0, -200 ), 16, 20 ) );
 
-		Magnet.push_back( cMagnet( Vector2D( 50, -100 ), 12, -1 ) );
+		Magnet.push_back( cMagnet( Vector2D( 70, -100 ), 12, -1 ) );
 		
 		
 		// Find the bounds rectangle //
 		for ( size_t idx = 0; idx < Map.Element.size(); idx++ ) {
 			if ( Map.Element[idx].Type == PME_RECT ) {
-				if ( Map.Element[idx].Id == 1 ) {
-					printf(" + Bounding Rectangle Set\n");
-					BoundsIndex = idx;
-					break;
-				}
+				switch (Map.Element[idx].Id) {
+					case 1: {
+						printf(" + Bounding Rectangle Set\n");
+						BoundsIndex = idx;
+						break;
+					}
+				};
 			}
 			else if ( Map.Element[idx].Type == PME_SPHERE ) {
 				// What type of Sphere is it? //
@@ -434,7 +437,6 @@ public:
 			
 			// Test for Collisions Vs. Polygons //
 			for ( size_t idx2 = 0; idx2 < Collision.size(); idx2++ ) {
-				printf("Test\n");
 				if ( TestPointVsPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() ) ) {
 					Vector2D EdgePoint = NearestPointOnEdgeOfPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() );
 					Particle[idx].Pos = EdgePoint;

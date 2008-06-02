@@ -6,21 +6,23 @@ Node 350 120
 Link 0 1
 Link 1 2
 
+// Bounds //
 Rect
 Id 1
 Vertex -960 -640
 Vertex 960 640
 
-Rect
-Vertex -950 -630
-Vertex 950 630
+//Rect
+//Vertex -950 -630
+//Vertex 950 630
 
 
 Poly
-Vertex 10 -210
+Id 1
+Vertex 40 -210
 Vertex 80 -210
 Vertex 70 120
-Vertex 20 120
+Vertex 50 120
 
 Sphere 100 100
 Radius 20
