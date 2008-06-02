@@ -81,14 +81,61 @@ public:
 	
 	Real OuterRadius;
 	Real OuterForce;
-public:
 	
+	// Cached Variables //
+	Real ForceDiff;
+	Real RadiusDiff;
+	Real InvRadiusDiff;	
+	
+public:
+	inline cImpulse(
+		const Vector2D& _Pos,
+		const Real& _InnerRadius, const Real& _InnerForce,
+		const Real& _OuterRadius, const Real& _OuterForce
+		) :
+		Pos( _Pos ),
+		InnerRadius( _InnerRadius ), InnerForce( _InnerForce ),
+		OuterRadius( _OuterRadius ), OuterForce( _OuterForce ),
+		ForceDiff( _InnerForce - _OuterForce ),
+		RadiusDiff( _OuterRadius - _InnerRadius ),
+		InvRadiusDiff( Real::One / RadiusDiff )
+	{
+	}
+
+public:
+	// Get the force on you, given your position //
+	inline Vector2D GetForce( const Vector2D& _Pos ) const {
+		Vector2D Line = _Pos - Pos;
+		
+		if ( Line.MagnitudeSquared() > (OuterRadius * OuterRadius) ) {
+			return Vector2D::Zero;
+		}
+		else if ( Line.MagnitudeSquared() <= (InnerRadius * InnerRadius) ) {
+			Vector2D LineNormal = Line.Normal();
+
+			return (LineNormal * InnerForce);
+		}
+		else {
+			// Linear Impulses //
+			Real Mag = Line.NormalizeRet();
+			Real ForceScalar = (RadiusDiff - ( Mag - InnerRadius )) * InvRadiusDiff;
+			return (Line * (ForceDiff * ForceScalar));
+			
+			// Exponential Impulses //
+//			Real Mag = Line.NormalizeRet();
+//			Mag -= InnerRadius;
+//			Real ForceScalar = Mag*Mag / (RadiusDiff*RadiusDiff); // * InvRadiusDiff;
+//			return Line * (ForceDiff * (Real::One - ForceScalar));
+		}
+	}
 };
 // - ------------------------------------------------------------------------------------------ - //
 class cParticle {
 public:
 	Vector2D Pos, Old;
 	Real Radius;
+	
+	Vector2D Force;
 	
 	int Polarity;
 
@@ -107,16 +154,23 @@ public:
 	inline const Vector2D Velocity() {
 		return (Pos - Old);
 	}
+	
+	inline void AddForce( const Vector2D& _Force ) {
+		Force += _Force;
+	}
 public:	
 	inline void Step() {
 		Vector2D Temp = Pos;
-		Vector2D NewVelocity = Velocity() * Real(0.95);
+		Vector2D NewVelocity = (Velocity() * Real(0.95)) + Force;
 		Real Speed = NewVelocity.NormalizeRet();
 		if ( Speed < Real(0.4) )
 			Speed = Real(0.4);
 		
 		Pos += NewVelocity * Speed;
 		Old = Temp;
+		
+		// Clear Collected Forces //
+		Force = Vector2D::Zero;
 	}
 	
 	inline void Draw() { 
@@ -331,7 +385,10 @@ public:
 		for ( size_t idx = 0; idx < Generator.size(); idx++ ) {
 			Generator[idx].Step();
 			if ( Generator[idx].StepClock() ) {
-				Particle.push_back( cParticle( Generator[idx].Pos, Generator[idx].Direction ) );
+				Vector2D Offset = 
+					Generator[idx].Direction.Tangent() * 
+					(((Real::Random() * Real(2)) - Real::One) * Generator[idx].Radius );
+				Particle.push_back( cParticle( Generator[idx].Pos + Offset, Generator[idx].Direction ) );
 			}
 		}
 		// Step all Collectors //
@@ -343,13 +400,26 @@ public:
 		for ( size_t idx = 0; idx < Magnet.size(); idx++ ) {
 			Magnet[idx].Step();
 			// TODO: Add Impulse //
+			Impulse.push_back( 
+				cImpulse(
+					Magnet[idx].Pos,
+					0, -0.01,
+					128, 0
+					)
+				);
 		}
 
 
 		// Step all Particles //
 		for ( size_t idx = 0; idx < Particle.size(); idx++ ) {
 			Particle[idx].Step();
-			
+
+			// Apply Impulses //
+			for ( size_t idx2 = 0; idx2 < Impulse.size(); idx2++ ) {
+				Particle[idx].AddForce( Impulse[idx2].GetForce( Particle[idx].Pos ) );
+			}
+
+		
 			// Test for Collisions Vs. Collectors //
 			for ( size_t idx2 = 0; idx2 < Collector.size(); idx2++ ) {
 				if ( TestPointVsSphere2D( Particle[idx].Pos, Collector[idx2].Pos, Collector[idx2].Radius ) ) {
