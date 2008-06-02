@@ -345,6 +345,7 @@ public:
 		Map( "TestMap.txt" ),
 		BoundsIndex( 0 )
 	{
+		printf( "- Game Init -\n" );
 		// Hacked in Elements //
 		Generator.push_back( cGenerator( Vector2D( 0, 0 ), 12, 30 ) );
 		Collector.push_back( cCollector( Vector2D( 0, -200 ), 16, 20 ) );
@@ -356,6 +357,7 @@ public:
 		for ( size_t idx = 0; idx < Map.Element.size(); idx++ ) {
 			if ( Map.Element[idx].Type == PME_RECT ) {
 				if ( Map.Element[idx].Id == 1 ) {
+					printf(" + Bounding Rectangle Set\n");
 					BoundsIndex = idx;
 					break;
 				}
@@ -366,16 +368,19 @@ public:
 					case 1: {
 						// Generator //
 						Generator.push_back( cGenerator(Map.Element[idx]) );
+						printf(" + Added Generator\n");
 						break;
 					}
 					case 11: {
 						// Collector //
 						Collector.push_back( cCollector(Map.Element[idx]) );
+						printf(" + Added Collector\n");
 						break;
 					}
 					case 21: {
 						// Magnet //
 						Magnet.push_back( cMagnet(Map.Element[idx]) );
+						printf(" + Added Magnet\n");
 						break;
 					}
 				};
@@ -383,6 +388,7 @@ public:
 			else if ( Map.Element[idx].Type == PME_POLY ) {
 				// For now, asume all polygons are collision //
 				Collision.push_back( &Map.Element[idx] );
+				printf(" + Added Collision Polygon\n");
 			}
 		}		
 	}
