@@ -136,6 +136,8 @@ public:
 	Real Radius;
 	
 	Vector2D Force;
+	Vector2D Reflection;
+	int Contacts;
 	
 	int Polarity;
 
@@ -158,10 +160,15 @@ public:
 	inline void AddForce( const Vector2D& _Force ) {
 		Force += _Force;
 	}
+	
+	inline void AddReflection( const Vector2D& _ContactNormal ) {
+		Contacts++;
+		Reflection += (Velocity() * _ContactNormal) * _ContactNormal;
+	}
 public:	
 	inline void Step() {
 		Vector2D Temp = Pos;
-		Vector2D NewVelocity = (Velocity() * Real(0.95)) + Force;
+		Vector2D NewVelocity = (Velocity() * Real(0.95)) + Force - Reflection;
 		Real Speed = NewVelocity.NormalizeRet();
 		if ( Speed < Real(0.4) )
 			Speed = Real(0.4);
@@ -171,6 +178,9 @@ public:
 		
 		// Clear Collected Forces //
 		Force = Vector2D::Zero;
+		
+		Reflection = Vector2D::Zero;
+		Contacts = 0;
 	}
 	
 	inline void Draw() { 
@@ -351,7 +361,7 @@ public:
 		Generator.push_back( cGenerator( Vector2D( 0, 0 ), 12, 30 ) );
 		Collector.push_back( cCollector( Vector2D( 0, -200 ), 16, 20 ) );
 
-		Magnet.push_back( cMagnet( Vector2D( 70, -100 ), 12, -1 ) );
+		//Magnet.push_back( cMagnet( Vector2D( 70, -100 ), 12, -1 ) );
 		
 		
 		// Find the bounds rectangle //
@@ -439,6 +449,8 @@ public:
 			for ( size_t idx2 = 0; idx2 < Collision.size(); idx2++ ) {
 				if ( TestPointVsPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() ) ) {
 					Vector2D EdgePoint = NearestPointOnEdgeOfPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() );
+					Particle[idx].AddReflection( NearestEdgeNormalOfPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() ) );
+					
 					Particle[idx].Pos = EdgePoint;
 				}
 			}
