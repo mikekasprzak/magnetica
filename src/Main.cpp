@@ -19,15 +19,18 @@
 int main( int argc, char* argv[] ) {
 	gfxInit( 480, 320, false, 2 );
 	
-	{
+	do {
 		cGame Game;
 	
-		while( !gfxShutdown() ) {
+		while( !gfxShutdown() ) {	
 			gfxClearBuffer( RGB(70,0,0) );
 			
 			Mouse.Update();
 			Camera.Update();
 
+			// Reset Hack //
+			if ( key[KEY_TAB] )
+				break;
 			
 			if ( mouse_b == 2 ) {
 				gfxAddCameraPos( -(Mouse.Diff() * gfxGetCameraScale()) );
@@ -66,6 +69,7 @@ int main( int argc, char* argv[] ) {
 			gfxSwapBuffer();
 		}
 	}
+	while( key[KEY_TAB] );
 	
 	gfxExit();
 	return 0;

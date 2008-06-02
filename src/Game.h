@@ -102,6 +102,26 @@ public:
 	}
 	
 	// TODO: Add constructor that takes a PolyMapElement or Generator, and does the random calculation //
+
+public:
+	inline const Vector2D Velocity() {
+		return (Pos - Old);
+	}
+public:	
+	inline void Step() {
+		Vector2D Temp = Pos;
+		Vector2D NewVelocity = Velocity() * Real(0.95);
+		Real Speed = NewVelocity.NormalizeRet();
+		if ( Speed < Real(0.4) )
+			Speed = Real(0.4);
+		
+		Pos += NewVelocity * Speed;
+		Old = Temp;
+	}
+	
+	inline void Draw() { 
+		gfxDrawCircle( Pos, Radius, RGB_PURPLE );
+	}
 };
 // - ------------------------------------------------------------------------------------------ - //
 class cGenerator {
@@ -112,21 +132,65 @@ public:
 	Vector2D Direction;
 	
 	int Count;
+public:
+	// Clock/Generation Mechanisms //
+	bool Enabled;
+	int Ticks;
+	int TicksUntilNextSpawn;
+	
+	inline bool StepClock() {
+		if ( Enabled ) {
+			Ticks++;
+			if ( TicksUntilNextSpawn == Ticks ) {
+				if ( Count > 0 ) {
+					Count--;
+					
+					Ticks = 0;
+					return true;	
+				}
+			}
+		}
+		return false;
+	}
+
 
 public:
 	inline cGenerator( const Vector2D& _Pos, const Real _Radius, const int _Count ) :
 		Pos( _Pos ),
 		Radius( _Radius ),
-		Direction( Vector2D( 0, 1 ) ),
-		Count( _Count )
+		Direction( Vector2D( 0, -1 ) ),
+		Count( _Count ),
+		
+		Enabled( true ),
+		Ticks( 0 ),
+		TicksUntilNextSpawn( 60 )
 	{
 	}
 	
 	inline cGenerator( const cPolyMapElement& Element ) :
 		Pos( Element.Center ),
 		Radius( Element.Data[0].f ),
-		Count( Element.Data[1].i )
+		Direction( Vector2D( 0, -1 ) ),
+		Count( Element.Data[1].i ),
+		
+		Enabled( true ),
+		Ticks( 0 ),
+		TicksUntilNextSpawn( 60 )
 	{
+	}
+
+public:
+	inline void Step() {
+		
+	}
+	
+	inline void Draw() { 
+		if ( Enabled && Count ) {
+			gfxDrawCircle( Pos, Radius, RGB_SKY );
+		}
+		else {
+			gfxDrawCircle( Pos, Radius, RGB_BLUE );			
+		}
 	}
 };
 // - ------------------------------------------------------------------------------------------ - //
@@ -153,6 +217,15 @@ public:
 		Quota( Element.Data[1].i )
 	{
 	}
+
+public:
+	inline void Step() {
+		
+	}
+	
+	inline void Draw() { 
+		gfxDrawCircle( Pos, Radius, RGB_GREEN );
+	}
 };
 // - ------------------------------------------------------------------------------------------ - //
 class cMagnet {
@@ -175,6 +248,15 @@ public:
 		Polarity( Element.Data[1].i )
 	{
 	}	
+
+public:
+	inline void Step() {
+		
+	}
+	
+	inline void Draw() { 
+		gfxDrawCircle( Pos, Radius, RGB_ORANGE );
+	}
 };
 // - ------------------------------------------------------------------------------------------ - //
 
@@ -203,6 +285,13 @@ public:
 		Map( "TestMap.txt" ),
 		BoundsIndex( 0 )
 	{
+		// Hacked in Elements //
+		Generator.push_back( cGenerator( Vector2D( 0, 0 ), 12, 30 ) );
+		Collector.push_back( cCollector( Vector2D( 0, -200 ), 16, 20 ) );
+
+		Magnet.push_back( cMagnet( Vector2D( 50, -100 ), 12, -1 ) );
+		
+		
 		// Find the bounds rectangle //
 		for ( size_t idx = 0; idx < Map.Element.size(); idx++ ) {
 			if ( Map.Element[idx].Type == PME_RECT ) {
@@ -235,14 +324,55 @@ public:
 	}
 	
 	inline void Step() {
-//		// Step Elements //
-//		for ( size_t idx = 0; idx < Map.Element.size(); idx++ ) {
-//
-//		}
+		// Step all Generators //
+		for ( size_t idx = 0; idx < Generator.size(); idx++ ) {
+			Generator[idx].Step();
+			if ( Generator[idx].StepClock() ) {
+				Particle.push_back( cParticle( Generator[idx].Pos, Generator[idx].Direction ) );
+			}
+		}
+		// Step all Collectors //
+		for ( size_t idx = 0; idx < Collector.size(); idx++ ) {
+			Collector[idx].Step();
+			// TODO: Add Impulse 
+		}
+		// Step all Magnets //
+		for ( size_t idx = 0; idx < Magnet.size(); idx++ ) {
+			Magnet[idx].Step();
+			// TODO: Add Impulse //
+		}
+
+
+		// Step all Particles //
+		for ( size_t idx = 0; idx < Particle.size(); idx++ ) {
+			Particle[idx].Step();
+		}
+
+		// Remove all Impulses //
+		Impulse.clear();
 	}
 	
 	
 	inline void Draw() {
+		// Draw all Generators //
+		for ( size_t idx = 0; idx < Generator.size(); idx++ ) {
+			Generator[idx].Draw();
+		}
+		// Draw all Collectors //
+		for ( size_t idx = 0; idx < Collector.size(); idx++ ) {
+			Collector[idx].Draw();
+		}
+		// Draw all Magnets //
+		for ( size_t idx = 0; idx < Magnet.size(); idx++ ) {
+			Magnet[idx].Draw();
+		}
+
+		// Draw all Particles //
+		for ( size_t idx = 0; idx < Particle.size(); idx++ ) {
+			Particle[idx].Draw();
+		}
+		
+		
 		// Draw Elements //
 		for ( size_t idx = 0; idx < Map.Element.size(); idx++ ) {
 			// What kind of element is it? //
