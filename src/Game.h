@@ -87,6 +87,9 @@ public:
 	Real RadiusDiff;
 	Real InvRadiusDiff;	
 	
+	Real OuterRadiusSquared;
+	Real InnerRadiusSquared;
+	
 public:
 	inline cImpulse(
 		const Vector2D& _Pos,
@@ -98,7 +101,9 @@ public:
 		OuterRadius( _OuterRadius ), OuterForce( _OuterForce ),
 		ForceDiff( _InnerForce - _OuterForce ),
 		RadiusDiff( _OuterRadius - _InnerRadius ),
-		InvRadiusDiff( Real::One / RadiusDiff )
+		InvRadiusDiff( Real::One / RadiusDiff ),
+		OuterRadiusSquared( _OuterRadius * _OuterRadius ),
+		InnerRadiusSquared( _InnerRadius * _InnerRadius )
 	{
 	}
 
@@ -107,10 +112,10 @@ public:
 	inline Vector2D GetForce( const Vector2D& _Pos ) const {
 		Vector2D Line = _Pos - Pos;
 		
-		if ( Line.MagnitudeSquared() > (OuterRadius * OuterRadius) ) {
+		if ( Line.MagnitudeSquared() > OuterRadiusSquared ) {
 			return Vector2D::Zero;
 		}
-		else if ( Line.MagnitudeSquared() <= (InnerRadius * InnerRadius) ) {
+		else if ( Line.MagnitudeSquared() <= InnerRadiusSquared ) {
 			Vector2D LineNormal = Line.Normal();
 
 			return (LineNormal * InnerForce);
