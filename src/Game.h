@@ -82,6 +82,7 @@ public:
 	Real OuterRadius;
 	Real OuterForce;
 	
+	
 	// Cached Variables //
 	Real ForceDiff;
 	Real RadiusDiff;

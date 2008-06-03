@@ -45,7 +45,7 @@ int main( int argc, char* argv[] ) {
 			
 			// Step the game //
 			Game.Step();
-//			Game.Step();
+			Game.Step();
 //			Game.Step();
 //			Game.Step();
 //
