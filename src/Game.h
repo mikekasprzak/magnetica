@@ -448,6 +448,13 @@ public:
 		for ( size_t idx = 0; idx < Collector.size(); idx++ ) {
 			Collector[idx].Step();
 			// TODO: Add Impulse 
+			Impulse.push_back( 
+				cImpulse(
+					Collector[idx].Pos,
+					0, -0.01,
+					48, 0
+					)
+				);
 		}
 		// Step all Magnets //
 		for ( size_t idx = 0; idx < Magnet.size(); idx++ ) {
