@@ -162,21 +162,25 @@ public:
 	}
 	
 	inline void AddReflection( const Vector2D& _ContactNormal ) {
-		Real ReflectionStrength = (Velocity() * _ContactNormal);
+		Real ReflectionStrength = (Velocity() * _ContactNormal) * Real(2);
 		
 		// This doesn't appear to help ... yet //
-		if ( ReflectionStrength > Real::Zero ) {
+		//if ( ReflectionStrength > Real::Zero )
+		{
 			Contacts++;
-			Reflection += ReflectionStrength * _ContactNormal;
+			//Reflection += ReflectionStrength * _ContactNormal;
+			
+			Pos -= ReflectionStrength * _ContactNormal;
 		}
 	}
 public:	
 	inline void Step() {
 		Vector2D Temp = Pos;
-		Vector2D NewVelocity = (Velocity() * Real(0.95)) + Force - Reflection;
+		//Vector2D NewVelocity = (Velocity() * Real(0.95)) + Force - Reflection;
+		Vector2D NewVelocity = Velocity() + Force - Reflection;
 		Real Speed = NewVelocity.NormalizeRet();
-		if ( Speed < Real(0.4) )
-			Speed = Real(0.4);
+//		if ( Speed < Real(0.4) )
+//			Speed = Real(0.4);
 		
 		Pos += NewVelocity * Speed;
 		Old = Temp;
@@ -366,7 +370,7 @@ public:
 		Generator.push_back( cGenerator( Vector2D( 0, 0 ), 12, 30 ) );
 		Collector.push_back( cCollector( Vector2D( 0, -200 ), 16, 20 ) );
 
-		//Magnet.push_back( cMagnet( Vector2D( 70, -100 ), 12, -1 ) );
+		Magnet.push_back( cMagnet( Vector2D( 70, -100 ), 12, -1 ) );
 		
 		
 		// Find the bounds rectangle //
@@ -412,6 +416,11 @@ public:
 	}
 	
 	inline void Step() {
+		// Magnet Moving Hack //
+		if ( mouse_b == 1 )
+			Magnet[0].Pos = Camera.Mouse;
+		
+		
 		// Step all Generators //
 		for ( size_t idx = 0; idx < Generator.size(); idx++ ) {
 			Generator[idx].Step();
@@ -457,10 +466,21 @@ public:
 					//   do most of the time, but not always.  I think it has something to do with
 					//   causing a reflection with a reversed velocity against the surface.
 					
-					Vector2D EdgePoint = NearestPointOnEdgeOfPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() );
-					Particle[idx].AddReflection( NearestEdgeNormalOfPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() ) );
+					Vector2D EdgePoint = NearestPointOnEdgeOfPolygon2D( 
+						Particle[idx].Pos,
+						&Collision[idx2]->Vertex[0],
+						Collision[idx2]->Vertex.size()
+						);
+						
+					Particle[idx].AddReflection( 
+						NearestEdgeNormalOfPolygon2D( 
+							Particle[idx].Pos,
+							&Collision[idx2]->Vertex[0],
+							Collision[idx2]->Vertex.size()
+							)
+						);
 					
-					Particle[idx].Pos = EdgePoint;
+					//Particle[idx].Pos = EdgePoint;
 				}
 			}
 		
@@ -470,8 +490,9 @@ public:
 					Collector[idx2].Count++;
 					
 					// Kill Particle //
-					Particle[idx].Pos = Vector2D(0,0);
-					Particle[idx].Old = Vector2D(0,0);
+					Particle.erase( Particle.begin() + idx );
+					idx--;
+					break;
 				}
 			}
 			

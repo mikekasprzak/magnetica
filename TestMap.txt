@@ -27,8 +27,8 @@ Vertex 50 120
 
 Poly
 Id 1
-Vertex -40 -170
-Vertex 40 -170
+Vertex -80 -170
+Vertex 80 -170
 Vertex 0 -140
 
 
@@ -38,6 +38,13 @@ Vertex -120 -210
 Vertex -80 -210
 Vertex -10 120
 Vertex -70 120
+
+Poly
+Id 1
+Vertex -70 110
+Vertex 70 110
+Vertex 0 200
+
 
 
 Sphere 100 100
