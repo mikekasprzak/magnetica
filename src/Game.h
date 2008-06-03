@@ -136,8 +136,8 @@ public:
 	Real Radius;
 	
 	Vector2D Force;
-	Vector2D Reflection;
-	int Contacts;
+//	Vector2D Reflection;
+//	int Contacts;
 	
 	int Polarity;
 
@@ -165,31 +165,34 @@ public:
 		Real ReflectionStrength = (Velocity() * _ContactNormal) * Real(2);
 		
 		// This doesn't appear to help ... yet //
-		//if ( ReflectionStrength > Real::Zero )
+		if ( ReflectionStrength > Real::Zero )
 		{
-			Contacts++;
+			//Contacts++;
 			//Reflection += ReflectionStrength * _ContactNormal;
 			
-			Pos -= ReflectionStrength * _ContactNormal;
+			//Pos -= ReflectionStrength * _ContactNormal;
+			Old += ReflectionStrength * _ContactNormal;
 		}
 	}
 public:	
 	inline void Step() {
 		Vector2D Temp = Pos;
 		//Vector2D NewVelocity = (Velocity() * Real(0.95)) + Force - Reflection;
-		Vector2D NewVelocity = Velocity() + Force - Reflection;
-		Real Speed = NewVelocity.NormalizeRet();
+		Vector2D NewVelocity = Velocity() + Force;// - Reflection;
+//		Vector2D VelocityNormal = NewVelocity;
+//		Real Speed = VelocityNormal.NormalizeRet();
+//		Real Speed = NewVelocity.NormalizeRet();
 //		if ( Speed < Real(0.4) )
 //			Speed = Real(0.4);
 		
-		Pos += NewVelocity * Speed;
+		Pos += NewVelocity;// * Speed;
 		Old = Temp;
 		
 		// Clear Collected Forces //
-		Force = Vector2D::Zero;
+		Force = Vector2D(0,0);
 		
-		Reflection = Vector2D::Zero;
-		Contacts = 0;
+//		Reflection = Vector2D(0,0);
+//		Contacts = 0;
 	}
 	
 	inline void Draw() { 
