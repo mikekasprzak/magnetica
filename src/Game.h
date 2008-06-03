@@ -136,8 +136,7 @@ public:
 	Real Radius;
 	
 	Vector2D Force;
-//	Vector2D Reflection;
-//	int Contacts;
+
 	
 	int Polarity;
 
@@ -161,38 +160,30 @@ public:
 		Force += _Force;
 	}
 	
-	inline void AddReflection( const Vector2D& _ContactNormal ) {
+	inline void ApplyReflection( const Vector2D& _ContactNormal ) {
+		// Calculate the Reflection //
 		Real ReflectionStrength = (Velocity() * _ContactNormal) * Real(2);
 		
-		// This doesn't appear to help ... yet //
-		if ( ReflectionStrength > Real::Zero )
-		{
-			//Contacts++;
-			//Reflection += ReflectionStrength * _ContactNormal;
-			
-			//Pos -= ReflectionStrength * _ContactNormal;
+		// Reflect only if you oppose the direction of the Contact Normal //
+		if ( ReflectionStrength > Real::Zero ) {
+			// Apply the reflection to Old Position //
 			Old += ReflectionStrength * _ContactNormal;
 		}
 	}
 public:	
 	inline void Step() {
 		Vector2D Temp = Pos;
-		//Vector2D NewVelocity = (Velocity() * Real(0.95)) + Force - Reflection;
-		Vector2D NewVelocity = Velocity() + Force;// - Reflection;
-//		Vector2D VelocityNormal = NewVelocity;
-//		Real Speed = VelocityNormal.NormalizeRet();
-//		Real Speed = NewVelocity.NormalizeRet();
-//		if ( Speed < Real(0.4) )
-//			Speed = Real(0.4);
+		Vector2D NewVelocity = (Velocity() * Real(0.98)) + Force;
+		//Vector2D NewVelocity = Velocity() + Force;
+		Real Speed = NewVelocity.NormalizeRet();
+		if ( Speed < Real(0.4) )
+			Speed = Real(0.4);
 		
-		Pos += NewVelocity;// * Speed;
+		Pos += NewVelocity * Speed;
 		Old = Temp;
 		
 		// Clear Collected Forces //
 		Force = Vector2D(0,0);
-		
-//		Reflection = Vector2D(0,0);
-//		Contacts = 0;
 	}
 	
 	inline void Draw() { 
@@ -465,25 +456,14 @@ public:
 			// Test for Collisions Vs. Polygons //
 			for ( size_t idx2 = 0; idx2 < Collision.size(); idx2++ ) {
 				if ( TestPointVsPolygon2D( Particle[idx].Pos, &Collision[idx2]->Vertex[0], Collision[idx2]->Vertex.size() ) ) {
-					// TODO: There is a bug here.  Points don't always reflect correctly.  They
-					//   do most of the time, but not always.  I think it has something to do with
-					//   causing a reflection with a reversed velocity against the surface.
-					
-					Vector2D EdgePoint = NearestPointOnEdgeOfPolygon2D( 
-						Particle[idx].Pos,
-						&Collision[idx2]->Vertex[0],
-						Collision[idx2]->Vertex.size()
-						);
-						
-					Particle[idx].AddReflection( 
+					// Reflect off the surface //
+					Particle[idx].ApplyReflection( 
 						NearestEdgeNormalOfPolygon2D( 
 							Particle[idx].Pos,
 							&Collision[idx2]->Vertex[0],
 							Collision[idx2]->Vertex.size()
 							)
 						);
-					
-					//Particle[idx].Pos = EdgePoint;
 				}
 			}
 		

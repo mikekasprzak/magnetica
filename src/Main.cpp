@@ -45,14 +45,14 @@ int main( int argc, char* argv[] ) {
 			
 			// Step the game //
 			Game.Step();
-			Game.Step();
-			Game.Step();
-			Game.Step();
-
-			Game.Step();
-			Game.Step();
-			Game.Step();
-			Game.Step();
+//			Game.Step();
+//			Game.Step();
+//			Game.Step();
+//
+//			Game.Step();
+//			Game.Step();
+//			Game.Step();
+//			Game.Step();
 			
 			// Prior to drawing, set the current matrix to suit drawing relative to the camera //
 			gfxSetCameraMatrix();
