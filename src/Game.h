@@ -242,9 +242,12 @@ public:
 	
 	inline cGenerator( const cPolyMapElement& Element ) :
 		Pos( Element.Center ),
-		Radius( Element.Data[0].f ),
-		Direction( Vector2D( 0, -1 ) ),
-		Count( Element.Data[1].i ),
+		Radius( 12 ),
+		Direction( Vector2D( -1, -2 ).Normal() ),
+		Count( 30 ),
+//		Radius( Element.Data[0].f ),
+//		Direction( Vector2D( 0, -1 ) ),
+//		Count( Element.Data[1].i ),
 		
 		Enabled( true ),
 		Ticks( 0 ),
@@ -283,14 +286,22 @@ public:
 	{
 	}
 	
+//	inline cCollector( const cPolyMapElement& Element ) :
+//		Pos( Element.Center ),
+//		Radius( Element.Data[0].f ),
+//		Count( 0 ),
+//		Quota( Element.Data[1].i )
+//	{
+//	}
+	
 	inline cCollector( const cPolyMapElement& Element ) :
 		Pos( Element.Center ),
-		Radius( Element.Data[0].f ),
+		Radius( 16 ),
 		Count( 0 ),
-		Quota( Element.Data[1].i )
+		Quota( 30 )
 	{
 	}
-
+	
 public:
 	inline void Step() {
 		
@@ -320,8 +331,10 @@ public:
 	
 	inline cMagnet( const cPolyMapElement& Element ) :
 		Pos( Element.Center ),
-		Radius( Element.Data[0].f ),
-		Polarity( Element.Data[1].i )
+		Radius( 12 ),
+		Polarity( 1 )
+//		Radius( Element.Data[0].f ),
+//		Polarity( Element.Data[1].i )
 	{
 	}	
 
@@ -367,10 +380,10 @@ public:
 	{
 		printf( "- Game Init -\n" );
 		// Hacked in Elements //
-		Generator.push_back( cGenerator( Vector2D( 0, 0 ), 12, 30 ) );
-		Collector.push_back( cCollector( Vector2D( 0, -200 ), 16, 20 ) );
-
-		Magnet.push_back( cMagnet( Vector2D( 70, -100 ), 12, -1 ) );
+//		Generator.push_back( cGenerator( Vector2D( 0, 0 ), 12, 30 ) );
+//		Collector.push_back( cCollector( Vector2D( 0, -200 ), 16, 20 ) );
+//
+//		Magnet.push_back( cMagnet( Vector2D( 70, -100 ), 12, -1 ) );
 		
 		
 		// Find the bounds rectangle //

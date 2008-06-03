@@ -1,0 +1,56 @@
+// Test Map File //
+
+Node 400 40
+Node 300 80
+Node 350 120
+Link 0 1
+Link 1 2
+
+// Bounds //
+Rect
+Id 1
+Vertex -960 -640
+Vertex 960 640
+
+//Rect
+//Vertex -950 -630
+//Vertex 950 630
+
+
+Poly
+Id 1
+Vertex 40 -210
+Vertex 80 -210
+Vertex 70 120
+Vertex 50 120
+
+
+Poly
+Id 1
+Vertex -80 -170
+Vertex 80 -170
+Vertex 0 -140
+
+
+Poly
+Id 1
+Vertex -120 -210
+Vertex -80 -210
+Vertex -10 120
+Vertex -70 120
+
+Poly
+Id 1
+Vertex -70 110
+Vertex 70 110
+Vertex 0 200
+
+
+
+Sphere 100 100
+Radius 20
+
+Rect
+Vertex 40 200
+Vertex 80 230
+

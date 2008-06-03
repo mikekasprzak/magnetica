@@ -1,56 +1,44 @@
 // Test Map File //
 
-Node 400 40
-Node 300 80
-Node 350 120
-Link 0 1
-Link 1 2
-
 // Bounds //
 Rect
 Id 1
 Vertex -960 -640
 Vertex 960 640
 
-//Rect
-//Vertex -950 -630
-//Vertex 950 630
+// Set Global Scalal for rest of co-ordinates //
+Scalar 20
 
-
+// Main Level Colosion Body //
 Poly
 Id 1
-Vertex 40 -210
-Vertex 80 -210
-Vertex 70 120
-Vertex 50 120
+Vertex -14 0
+Vertex 8 -10
+Vertex 13 2
+Vertex -10 12
 
+Vertex -14 1
+Vertex -11 0
+Vertex -8 8
+Vertex -4 7
+Vertex -6 1
 
-Poly
+Vertex 2 0
+Vertex 6 2
+Vertex 9 -2
+Vertex 6 -5
+Vertex 2 -3
+Vertex -2 -3
+Vertex -15 2
+
+// Generator //
+Sphere -6 6
 Id 1
-Vertex -80 -170
-Vertex 80 -170
-Vertex 0 -140
 
+// Collector //
+Sphere 6 -2
+Id 11
 
-Poly
-Id 1
-Vertex -120 -210
-Vertex -80 -210
-Vertex -10 120
-Vertex -70 120
-
-Poly
-Id 1
-Vertex -70 110
-Vertex 70 110
-Vertex 0 200
-
-
-
-Sphere 100 100
-Radius 20
-
-Rect
-Vertex 40 200
-Vertex 80 230
-
+// Magnet //
+Sphere 6 -8
+Id 21
