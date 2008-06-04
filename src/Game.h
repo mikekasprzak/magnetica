@@ -463,7 +463,7 @@ public:
 			Impulse.push_back( 
 				cImpulse(
 					Magnet[idx].Pos,
-					0, -0.01,
+					0, -0.02,
 					128, 0
 					)
 				);
